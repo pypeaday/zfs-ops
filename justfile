@@ -20,7 +20,7 @@ setup-ghost-vault:
     set -euxo pipefail
 
     export SETUP_SANOID=false
-    export SETUP_SYNCOID=false
+    export SETUP_SYNCOID=true
     export INSTALL_ZFS=false
 
     just setup ghost-vault
