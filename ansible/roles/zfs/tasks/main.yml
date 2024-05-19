@@ -13,14 +13,19 @@
           - build-essential
           - zfsutils-linux
           - zfs-dkms
-      ignore_errors: true
+
+    - name: Check if service exists
+      command: "systemctl status docker-wait-for-zfs.service"
+      register: service_status
+      changed_when: false
+      failed_when: "'Loaded: not-found' in service_status.stdout"
 
     - name: Add docker wait service
       template:
         src: docker-wait-for-zfs.service
         dest: /etc/systemd/system/docker-wait-for-zfs.service
       register: docker_wait_zfs
-      ignore_errors: true
+      when: "'Loaded: not-found' in service_status.stdout"
 
     - name: Ensure docker wait for zfs service
       service:
