@@ -69,7 +69,6 @@
     - name: Ensure syncoid started
       service:
         name: syncoid-replication
-        state: started
         enabled: true
 
     - name: Add syncoid timer
