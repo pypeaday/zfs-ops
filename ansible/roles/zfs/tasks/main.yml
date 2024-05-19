@@ -1,5 +1,5 @@
 - name: Setup ZFS
-  when: install_zfs is true
+  when: install_zfs|string == "true"
   block:
     - name: Install Prerequisite software
       apt:

@@ -3,16 +3,19 @@
   ansible.builtin.command: which sanoid
   register: sanoid_installed
 
-- name: Print variable value
-  debug:
-    var: setup_sanoid
-- name: Print variable value
-  debug:
-    var: setup_syncoid
-
 - name: Setup Sanoid
-  when: setup_sanoid is true and not sanoid_installed
+  when: setup_sanoid|string == "true" and not sanoid_installed
   block:
+    - name: Install Prerequisite software
+      apt:
+        pkg:
+          - debhelper
+          - libcapture-tiny-perl
+          - libconfig-inifiles-perl
+          - pv
+          - lzop
+          - mbuffer
+          - build-essential
     - name: Clone Sanoid repo
       ansible.builtin.shell: git clone https://github.com/jimsalterjrs/sanoid.git /home/{{ansible_user}}/third-party/sanoid
       become: true
@@ -55,7 +58,7 @@
         enabled: true
 
 - name: Setup Syncoid
-  when: setup_syncoid is true
+  when: setup_syncoid|string == "true"
   block:
     - name: Add syncoid service
       become: true
