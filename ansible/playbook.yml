@@ -1,0 +1,13 @@
+---
+- hosts: localhost
+
+  roles:
+    - role: zfs
+      become: true
+      tags:
+        - zfs
+    - role: sanoid-and-syncoid
+      become: true
+      tags:
+        - sanoid
+        - oids

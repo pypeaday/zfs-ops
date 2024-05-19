@@ -1,0 +1,11 @@
+[Unit]
+Description=ZFS Replication With Syncoid
+
+[Service]
+Type=oneshot
+ExecStart=/home/nic/personal/zfs-ops/{{ hostname }}/syncoid-replication.sh
+User=nic
+Group=nic
+
+[Install]
+WantedBy=multi-user.target

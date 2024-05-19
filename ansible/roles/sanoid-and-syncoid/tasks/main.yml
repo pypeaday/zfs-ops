@@ -1,0 +1,65 @@
+---
+- name: Clone Sanoid repo
+  ansible.builtin.shell: git clone https://github.com/jimsalterjrs/sanoid.git /home/{{ansible_user}}/third-party/sanoid
+  become: true
+
+- name: Checkout relevant latest stable release
+  become: true
+  ansible.builtin.shell: |
+    cd /home/{{ansible_user}}/third-party/sanoid
+    # checkout latest stable release or stay on master for bleeding edge stuff (but expect bugs!)
+    git checkout $(git tag | grep "^v" | tail -n 1)
+    ln -s packages/debian .
+    dpkg-buildpackage -uc -us
+    apt install ../sanoid_*_all.deb
+
+- name: Remove default sanoid.conf
+  become: true
+  file:
+    path: /etc/sanoid/sanoid.conf
+    state: absent
+  ignore_errors: true
+
+- name: Link sanoid.conf from zfs-ops to /etc/sanoid
+  become: true
+  symlink:
+    src: /home/{{ ansible_user }}/personal/zfs-ops/{{ hostname }}/sanoid.conf
+    dest: /etc/sanoid/sanoid.conf
+
+- name: Enable sanoid timer
+  become: true
+  ansible.builtin.shell: |
+    # enable and start the sanoid timer
+    systemctl enable sanoid.timer
+    systemctl start sanoid.timer
+
+- name: Ensure sanoid started
+  service:
+    name: sanoid
+    state: started
+    enabled: true
+
+- name: Add syncoid service
+  become: true
+  template:
+    src: syncoid-replication.service.j2
+    dest: /etc/systemd/system/syncoid-replication.service
+
+- name: Ensure syncoid started
+  service:
+    name: syncoid-replication
+    state: started
+    enabled: true
+
+- name: Add syncoid timer
+  become: true
+  template:
+    src: syncoid-replication.timer
+    dest: /etc/systemd/system/syncoid-replication.timer
+
+- name: Enable syncoid timer
+  become: true
+  ansible.builtin.shell: |
+    # enable and start the sanoid timer
+    sudo systemctl enable syncoid-replication.timer
+    sudo systemctl start syncoid-replication.timer

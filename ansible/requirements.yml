@@ -1,0 +1,9 @@
+# TODO: figure out how to use this role from remote repo in subdirectory
+# roles:
+#   - name: zfs-and-sanoid
+#     src: https://github.com/pypeaday/zfs-ops.git
+#     scm: git
+
+# collections:
+#   - name: ansible.posix
+#   - name: community.general
