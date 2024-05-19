@@ -1,6 +1,10 @@
 ---
+- name: Check if sanoid is installed
+  ansible.builtin.command: which sanoid
+  register: sanoid_installed
+
 - name: Setup Sanoid
-  when: setup_sanoid is true
+  when: setup_sanoid is true and not sanoid_installed
   block:
     - name: Clone Sanoid repo
       ansible.builtin.shell: git clone https://github.com/jimsalterjrs/sanoid.git /home/{{ansible_user}}/third-party/sanoid
@@ -26,7 +30,7 @@
     - name: Link sanoid.conf from zfs-ops to /etc/sanoid
       become: true
       symlink:
-        src: /home/{{ ansible_user }}/personal/zfs-ops/{{ hostname }}/sanoid.conf
+        src: /home/{{ ansible_user }}/zfs-ops/{{ hostname }}/sanoid.conf
         dest: /etc/sanoid/sanoid.conf
 
     - name: Enable sanoid timer
