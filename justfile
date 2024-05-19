@@ -9,7 +9,11 @@ setup desired_hostname="babyblue":
         echo "Hostname does not match the desired value. Exiting."
         exit 1
     fi
-    ansible-playbook -bK ansible/playbook.yml --extra-vars "hostname=$hostname" --extra-vars "setup_syncoid=$SETUP_SYNCOID" --extra-vars "setup_sanoid=$SETUP_SANOID" --extra-vars "install_zfs=$INSTALL_ZFS"
+    ansible-playbook -bK ansible/playbook.yml \
+        --extra-vars "hostname=$hostname" \
+        --extra-vars "setup_syncoid=$SETUP_SYNCOID" \
+        --extra-vars "setup_sanoid=$SETUP_SANOID" \
+        --extra-vars "install_zfs=$INSTALL_ZFS"
 
 setup-ghost-vault:
     #!/usr/bin/env bash
