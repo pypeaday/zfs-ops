@@ -1,9 +1,10 @@
 default:
     @just --choose
 
-setup desired_hostname="babyblue":
+setup desired_hostname="babyblue" install_zfs="false" setup_sanoid="false" setup_syncoid="false":
     #!/usr/bin/env bash
     set -euxo pipefail
+    echo $SETUP_SANOID $SETUP_SYNCOID
     hostname=$(hostname)
     if [ "$hostname" != {{ desired_hostname }} ]; then
         echo "Hostname does not match the desired value. Exiting."
@@ -19,28 +20,16 @@ setup-ghost-vault:
     #!/usr/bin/env bash
     set -euxo pipefail
 
-    export SETUP_SANOID=false
-    export SETUP_SYNCOID=true
-    export INSTALL_ZFS=false
-
-    just setup ghost-vault
+    just setup ghost-vault false false true
 
 setup-ghost:
     #!/usr/bin/env bash
     set -euxo pipefail
-
-    export SETUP_SANOID=false
-    export SETUP_SYNCOID=false
-    export INSTALL_ZFS=false
 
     just setup ghost
 
 setup-babyblue:
     #!/usr/bin/env bash
     set -euxo pipefail
-
-    export SETUP_SANOID=false
-    export SETUP_SYNCOID=false
-    export INSTALL_ZFS=false
 
     just setup babyblue
