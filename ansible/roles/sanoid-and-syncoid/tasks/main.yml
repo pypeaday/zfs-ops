@@ -30,15 +30,9 @@
     - name: Link sanoid.conf from zfs-ops to /etc/sanoid
       become: true
       file:
-        src: /home/{{ ansible_user }}/zfs-ops/{{ hostname }}/sanoid.conf
+        src: /home/{{ ansible_user }}/zfs-ops/hosts/{{ hostname }}/sanoid.conf
         dest: /etc/sanoid/sanoid.conf
         state: link
-
-    # - name: Link sanoid.conf from zfs-ops to /etc/sanoid
-    #   become: true
-    #   symlink:
-    #     src: /home/{{ ansible_user }}/zfs-ops/{{ hostname }}/sanoid.conf
-    #     dest: /etc/sanoid/sanoid.conf
 
     - name: Enable sanoid timer
       become: true
