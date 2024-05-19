@@ -1,0 +1,3 @@
+setup_sanoid: false
+setup_syncoid: false
+hostname: localhost

@@ -1,5 +1,10 @@
 ---
 - hosts: localhost
+  vars:
+    hostname: what-to-do
+    setup_sanoid: false
+    setup_syncoid: false
+    install_zfs: false
 
   roles:
     - role: zfs

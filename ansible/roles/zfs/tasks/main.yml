@@ -1,27 +1,29 @@
----
-- name: Install Prerequisite software
-  apt:
-    pkg:
-      - debhelper
-      - libcapture-tiny-perl
-      - libconfig-inifiles-perl
-      - pv
-      - lzop
-      - mbuffer
-      - build-essential
-      - zfsutils-linux
-      - zfs-dkms
-  ignore_errors: yes
+- name: Setup ZFS
+  when: install_zfs is true
+  block:
+    - name: Install Prerequisite software
+      apt:
+        pkg:
+          - debhelper
+          - libcapture-tiny-perl
+          - libconfig-inifiles-perl
+          - pv
+          - lzop
+          - mbuffer
+          - build-essential
+          - zfsutils-linux
+          - zfs-dkms
+      ignore_errors: true
 
-- name: Add docker wait service
-  template:
-    src: docker-wait-for-zfs.service
-    dest: /etc/systemd/system/docker-wait-for-zfs.service
-  register: docker_wait_zfs
-  ignore_errors: yes
+    - name: Add docker wait service
+      template:
+        src: docker-wait-for-zfs.service
+        dest: /etc/systemd/system/docker-wait-for-zfs.service
+      register: docker_wait_zfs
+      ignore_errors: true
 
-- name: Ensure docker wait for zfs service
-  service:
-    name: docker-wait-for-zfs
-    state: started
-    enabled: yes
+    - name: Ensure docker wait for zfs service
+      service:
+        name: docker-wait-for-zfs
+        state: started
+        enabled: true
