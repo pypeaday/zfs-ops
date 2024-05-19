@@ -4,7 +4,8 @@ default:
 setup desired_hostname="babyblue" install_zfs="false" setup_sanoid="false" setup_syncoid="false":
     #!/usr/bin/env bash
     set -euxo pipefail
-    echo $SETUP_SANOID $SETUP_SYNCOID
+
+    echo {{ setup_sanoid }} {{ setup_syncoid }}
     hostname=$(hostname)
     if [ "$hostname" != {{ desired_hostname }} ]; then
         echo "Hostname does not match the desired value. Exiting."
@@ -12,9 +13,9 @@ setup desired_hostname="babyblue" install_zfs="false" setup_sanoid="false" setup
     fi
     ansible-playbook -bK ansible/playbook.yml \
         --extra-vars "hostname=$hostname" \
-        --extra-vars "setup_syncoid=$SETUP_SYNCOID" \
-        --extra-vars "setup_sanoid=$SETUP_SANOID" \
-        --extra-vars "install_zfs=$INSTALL_ZFS"
+        --extra-vars "setup_syncoid={{ setup_syncoid }}" \
+        --extra-vars "setup_sanoid={{ setup_sanoid }}" \
+        --extra-vars "install_zfs={{ install_zfs }}"
 
 setup-ghost-vault:
     #!/usr/bin/env bash
