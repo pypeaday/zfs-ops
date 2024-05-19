@@ -12,6 +12,7 @@ setup desired_hostname="babyblue" install_zfs="false" setup_sanoid="false" setup
         exit 1
     fi
     ansible-playbook -bK ansible/playbook.yml \
+        -vv \
         --extra-vars "hostname=$hostname" \
         --extra-vars "setup_syncoid={{ setup_syncoid }}" \
         --extra-vars "setup_sanoid={{ setup_sanoid }}" \
