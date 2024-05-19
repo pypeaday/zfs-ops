@@ -10,6 +10,4 @@ This ansible role does not setup any ZFS datasets - it just installs the zfs lib
 
 There is a folder per host right now with appropriate files inside. Someday I'd like to standardize on a pattern like `app-prd01` or something, but for now homelab names are where it's at
 
-## Sanoid
-
-TODO: Need to fork sanoid and/or come up with ansible playbook for setting up sanoid with my appropriate file which _is done_ (will be done) by hostname
+To run things I'm using [just](https://github.com/casey/just)
