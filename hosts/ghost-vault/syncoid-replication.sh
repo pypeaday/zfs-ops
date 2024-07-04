@@ -18,13 +18,6 @@ curl https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/syncoid/start
 echo "Syncing nic@ghost:tank/encrypted/10Fold!"
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/10Fold tank/encrypted/10Fold
 
-echo "Syncing nic@ghost:tank/encrypted/nas! excluding tank/encrypted/nas/media"
-syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/nas tank/encrypted/nas || echo "couldn't sync parent tank/encrypted/nas"
-syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/nas/documents tank/encrypted/nas/documents
-syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/nas/documents/paperless tank/encrypted/nas/documents/paperless
-syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/nas/dump tank/encrypted/nas/dump
-syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/nas/torrents tank/encrypted/nas/torrents
-
 # echo "Syncing nic@ghost:tank/encrypted/fs!" >>/home/nic/mycron.log
 # syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/fs tank/encrypted/fs
 # syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/fs/home tank/encrypted/fs/home
@@ -42,6 +35,13 @@ syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/e
 
 echo "Syncing nic@ghost:tank/encrypted/docker/nextcloud-zfs!"
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/docker/nextcloud-zfs tank/encrypted/docker/nextcloud-zfs
+
+echo "Syncing nic@ghost:tank/encrypted/nas! excluding tank/encrypted/nas/media"
+syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/nas tank/encrypted/nas
+syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/nas/documents tank/encrypted/nas/documents
+syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/nas/documents/paperless tank/encrypted/nas/documents/paperless
+syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/nas/dump tank/encrypted/nas/dump
+syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/nas/torrents tank/encrypted/nas/torrents
 
 # hcio
 curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/syncoid
