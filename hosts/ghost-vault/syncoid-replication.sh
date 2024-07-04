@@ -34,7 +34,7 @@ syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/e
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/vms/pihole tank/encrypted/vms/pihole
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/vms/homeassistant tank/encrypted/vms/homeassistant
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/vms/win10 tank/encrypted/vms/win10
-syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/vms/block-subnet-router tank/encrypted/vms/block-subnet-router
+# syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/vms/block-subnet-router tank/encrypted/vms/block-subnet-router
 
 echo "Syncing nic@ghost:tank/encrypted/docker!" >>/home/nic/mycron.log
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/docker tank/encrypted/docker
