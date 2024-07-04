@@ -24,9 +24,9 @@ syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/e
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/nas/dump tank/encrypted/nas/dump
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/nas/torrents tank/encrypted/nas/torrents
 
-echo "Syncing nic@ghost:tank/encrypted/fs!" >>/home/nic/mycron.log
-syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/fs tank/encrypted/fs
-syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/fs/home tank/encrypted/fs/home
+# echo "Syncing nic@ghost:tank/encrypted/fs!" >>/home/nic/mycron.log
+# syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/fs tank/encrypted/fs
+# syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/fs/home tank/encrypted/fs/home
 
 echo "Syncing nic@ghost:tank/encrypted/vms!" >>/home/nic/mycron.log
 # syncoid --skip-parent --no-sync-snap --sendoptions=w -r --no-privilege-elevation nic@ghost:tank/encrypted/vms tank/encrypted/vms
