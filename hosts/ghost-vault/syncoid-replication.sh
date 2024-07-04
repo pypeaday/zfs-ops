@@ -11,8 +11,9 @@ curl https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/syncoid/start
 # msg=OK &
 # ping=
 
-echo "Syncing nic@ghost:tank/encrypted!"
-syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted tank/encrypted
+# No need to sync tank/encrypted since it's functionaly a root/pool to me and I keep everything in child datasets
+# echo "Syncing nic@ghost:tank/encrypted!"
+# syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted tank/encrypted
 
 echo "Syncing nic@ghost:tank/encrypted/10Fold!"
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/10Fold tank/encrypted/10Fold
