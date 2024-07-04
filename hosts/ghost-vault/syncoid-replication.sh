@@ -6,10 +6,10 @@ set -e
 # hcio start
 curl https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/syncoid/start
 
-# uptime kuma
-curl http://ghost:3003/api/push/CwMdeuJL4T?status=up &
-msg=OK &
-ping=
+# # uptime kuma
+# curl http://ghost:3003/api/push/CwMdeuJL4T?status=up &
+# msg=OK &
+# ping=
 
 echo "Syncing nic@ghost:tank/encrypted!" >>/home/nic/mycron.log
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted tank/encrypted
@@ -45,6 +45,6 @@ syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/e
 # hcio
 curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/syncoid
 
-curl http://ghost:3003/api/push/hp6KnHdVXJ?status=up &
-msg=OK &
-ping=
+# curl http://ghost:3003/api/push/hp6KnHdVXJ?status=up &
+# msg=OK &
+# ping=
