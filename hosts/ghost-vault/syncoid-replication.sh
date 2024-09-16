@@ -17,8 +17,9 @@ curl https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/syncoid/start
 # will exist on the backup
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted tank/encrypted
 
-echo "Syncing nic@ghost:tank/encrypted/10Fold!"
-syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/10Fold tank/encrypted/10Fold
+# echo "Syncing nic@ghost:tank/encrypted/10Fold!"
+# this dataset sometimes causes issues but I don't need it anyways
+# syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/10Fold tank/encrypted/10Fold
 
 # echo "Syncing nic@ghost:tank/encrypted/fs!" >>/home/nic/mycron.log
 # syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/fs tank/encrypted/fs
