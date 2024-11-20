@@ -22,5 +22,7 @@ syncoid --no-sync-snap --no-privilege-elevation nic@ghost:tank/encrypted/vms tan
 syncoid --no-sync-snap --no-privilege-elevation nic@ghost:tank/encrypted/vms/pihole tank/unencrypted_backup/vms/pihole
 syncoid --no-sync-snap --no-privilege-elevation nic@ghost:tank/encrypted/vms/homeassistant tank/unencrypted_backup/vms/homeassistant
 
+# TODO: rsync home folder on aurora to a backup on local tank or to ghost
+
 # hcio
 curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/babyblue-aurora
