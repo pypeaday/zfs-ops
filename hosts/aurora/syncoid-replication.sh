@@ -1,12 +1,6 @@
 #!/bin/bash
 
 set -e
-# fail hcio if anything goes wrong
-curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/babyblue-aurora
-
-# hcio start
-# make new endpoint for local backup
-# curl https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/syncoid/start
 
 syncoid --no-sync-snap --no-privilege-elevation nic@ghost:tank/encrypted/docker tank/unencrypted_backup/docker
 
