@@ -2,6 +2,8 @@
 
 set -e
 
+syncoid --no-sync-snap --no-privilege-elevation nic@ghost:tank/encrypted tank/unencrypted_backup
+
 syncoid --no-sync-snap --no-privilege-elevation nic@ghost:tank/encrypted/docker tank/unencrypted_backup/docker
 
 syncoid --no-sync-snap --no-privilege-elevation nic@ghost:tank/encrypted/docker/nextcloud-zfs tank/unencrypted_backup/docker/nextcloud-zfs
