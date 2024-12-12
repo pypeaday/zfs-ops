@@ -30,8 +30,11 @@ curl https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/harbor-replication/start
 # will do a full replication from newest snapshot and exit immediately, rather
 # than starting with the oldest and then doing an immediate -i to the newest.)
 #
+# ONLY USED FOR INITIAL SYNC
+# --preserve-properties:
+# Preserves ZFS dataset properties (like compression, deduplication, mountpoints, etc.) during replication.
 
-syncoid --no-sync-snap --sendoptions=w -r --no-privilege-elevation --create-bookmark --no-resume --no-stream tank/encrypted harbor/encrypted
+syncoid --no-sync-snap --sendoptions=w -r --no-privilege-elevation --create-bookmark --no-resume --no-stream --preserve-properties tank/encrypted harbor/encrypted
 
 # hcio
 curl https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/harbor-replication
