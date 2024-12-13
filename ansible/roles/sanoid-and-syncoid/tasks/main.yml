@@ -2,6 +2,15 @@
 - name: Check if sanoid is installed
   ansible.builtin.command: which sanoid
   register: sanoid_installed
+  ignore_errors: yes
+  changed_when: false
+  failed_when: false
+  notify:
+    - Set sanoid_installed to false if command failed
+
+- name: Set sanoid_installed to false if command failed
+  set_fact:
+    sanoid_installed: "{{sanoid_installed|default(false)|bool}}"
 
 - name: Setup Sanoid
   when: setup_sanoid|string == "true" and not sanoid_installed
@@ -17,13 +26,13 @@
           - mbuffer
           - build-essential
     - name: Clone Sanoid repo
-      ansible.builtin.shell: git clone https://github.com/jimsalterjrs/sanoid.git /home/{{ansible_user}}/third-party/sanoid
+      ansible.builtin.shell: git clone https://github.com/jimsalterjrs/sanoid.git /home/{{ansible_user}}/projects/third-party/sanoid
       become: true
 
     - name: Checkout relevant latest stable release
       become: true
       ansible.builtin.shell: |
-        cd /home/{{ansible_user}}/third-party/sanoid
+        cd /home/{{ansible_user}}/projects/third-party/sanoid
         # checkout latest stable release or stay on master for bleeding edge stuff (but expect bugs!)
         git checkout $(git tag | grep "^v" | tail -n 1)
         ln -s packages/debian .
@@ -46,12 +55,14 @@
 
     - name: Enable sanoid timer
       become: true
+      ignore_errors: true
       ansible.builtin.shell: |
         # enable and start the sanoid timer
         systemctl enable sanoid.timer
         systemctl start sanoid.timer
 
     - name: Ensure sanoid started
+      ignore_errors: true
       service:
         name: sanoid
         state: started
@@ -67,17 +78,20 @@
         dest: /etc/systemd/system/syncoid-replication.service
 
     - name: Ensure syncoid started
+      ignore_errors: true
       service:
         name: syncoid-replication
         enabled: true
 
     - name: Add syncoid timer
+      ignore_errors: true
       become: true
       template:
         src: syncoid-replication.timer
         dest: /etc/systemd/system/syncoid-replication.timer
 
     - name: Enable syncoid timer
+      ignore_errors: true
       become: true
       ansible.builtin.shell: |
         # enable and start the sanoid timer

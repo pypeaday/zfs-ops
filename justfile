@@ -1,7 +1,8 @@
 default:
     @just --choose
 
-setup desired_hostname="babyblue" install_zfs="false" setup_sanoid="false" setup_syncoid="false":
+
+sanoid: desired_hostname="babyblue" install_zfs="false" setup_sanoid="false" setup_syncoid="false":
     #!/usr/bin/env bash
     set -euxo pipefail
 
@@ -12,7 +13,6 @@ setup desired_hostname="babyblue" install_zfs="false" setup_sanoid="false" setup
         exit 1
     fi
     ansible-playbook -bK ansible/playbook.yml \
-        -vvv \
         --extra-vars "hostname=$hostname" \
         --extra-vars "setup_syncoid={{ setup_syncoid }}" \
         --extra-vars "setup_sanoid={{ setup_sanoid }}" \
@@ -35,3 +35,4 @@ setup-babyblue:
     set -euxo pipefail
 
     just setup babyblue
+
