@@ -34,7 +34,7 @@ curl https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/harbor-replication/start
 # --preserve-properties:
 # Preserves ZFS dataset properties (like compression, deduplication, mountpoints, etc.) during replication.
 
-syncoid --no-sync-snap --sendoptions=w -r --no-privilege-elevation --create-bookmark --no-resume --no-stream --preserve-properties tank/encrypted harbor/encrypted
+syncoid --no-sync-snap --sendoptions=w -r --no-privilege-elevation --create-bookmark --no-resume --preserve-properties tank/encrypted harbor/encrypted
 
 # hcio
 curl https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/harbor-replication
