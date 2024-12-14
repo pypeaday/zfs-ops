@@ -3,9 +3,6 @@
 # fail hcio if anything goes wrong
 set -e
 
-# hcio start
-curl https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/syncoid/start
-
 # # uptime kuma
 # curl http://ghost:3003/api/push/CwMdeuJL4T?status=up &
 # msg=OK &
@@ -15,7 +12,9 @@ curl https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/syncoid/start
 # Really only need this because I have the "encrypted" parent dataset from not
 # using encryption in the beginning. This makes sure though that tank/encrytped
 # will exist on the backup
+curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/syncoid/start
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation --create-bookmark --no-resume nic@ghost:tank/encrypted tank/encrypted
+curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/syncoid
 
 # echo "Syncing nic@ghost:tank/encrypted/10Fold!"
 # this dataset sometimes causes issues but I don't need it anyways
@@ -25,29 +24,30 @@ syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation --create-bookmar
 # syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/fs tank/encrypted/fs
 # syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/fs/home tank/encrypted/fs/home
 
-echo "Syncing nic@ghost:tank/encrypted/vms!"
+curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/ghost-vault-vms/start
 # syncoid --skip-parent --no-sync-snap --sendoptions=w -r --no-privilege-elevation nic@ghost:tank/encrypted/vms tank/encrypted/vms
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation --create-bookmark --no-resume nic@ghost:tank/encrypted/vms tank/encrypted/vms
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation --create-bookmark --no-resume nic@ghost:tank/encrypted/vms/pihole tank/encrypted/vms/pihole
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation --create-bookmark --no-resume nic@ghost:tank/encrypted/vms/homeassistant tank/encrypted/vms/homeassistant
 # syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/vms/win10 tank/encrypted/vms/win10
 # syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/vms/block-subnet-router tank/encrypted/vms/block-subnet-router
+curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/ghost-vault-vms
 
-echo "Syncing nic@ghost:tank/encrypted/docker!"
+curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/ghost-vault-docker/start
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation --create-bookmark --no-resume nic@ghost:tank/encrypted/docker tank/encrypted/docker
+curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/ghost-vault-docker
 
-echo "Syncing nic@ghost:tank/encrypted/docker/nextcloud-zfs!"
+curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/ghost-vault-nextcloud/start
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/docker/nextcloud-zfs tank/encrypted/docker/nextcloud-zfs
+curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/ghost-vault-nextcloud
 
-echo "Syncing nic@ghost:tank/encrypted/nas! excluding tank/encrypted/nas/media"
+curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/ghost-vault-nas/start
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation --create-bookmark --no-resume nic@ghost:tank/encrypted/nas tank/encrypted/nas
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation --create-bookmark --no-resume nic@ghost:tank/encrypted/nas/documents tank/encrypted/nas/documents
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation --create-bookmark --no-resume nic@ghost:tank/encrypted/nas/documents/paperless tank/encrypted/nas/documents/paperless
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation --create-bookmark --no-resume nic@ghost:tank/encrypted/nas/dump tank/encrypted/nas/dump
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation --create-bookmark --no-resume nic@ghost:tank/encrypted/nas/torrents tank/encrypted/nas/torrents
-
-# hcio
-curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/syncoid
+curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/ghost-vault-nas
 
 # curl http://ghost:3003/api/push/hp6KnHdVXJ?status=up &
 # msg=OK &
