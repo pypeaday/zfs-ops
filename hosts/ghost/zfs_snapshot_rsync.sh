@@ -139,8 +139,8 @@ echo "Starting to process datasets in pool '$POOL_NAME'..."
 for DATASET in $DATASETS; do
   echo "Processing dataset: $DATASET"
 
-  # Get the most recent snapshot
-  SNAPSHOT=$(zfs list -H -o name -t snapshot -r "$DATASET" | tail -n 1)
+  # Get the most recent snapshot for this specific dataset
+  SNAPSHOT=$(zfs list -H -o name -t snapshot -r "$DATASET" | grep "^${DATASET}@" | tail -n 1)
   if [[ -z "$SNAPSHOT" ]]; then
     echo "  No snapshots found for dataset $DATASET. Skipping."
     continue
@@ -185,8 +185,3 @@ for DATASET in $DATASETS; do
     rmdir "$MOUNT_POINT"
   fi
 done
-
-echo "All datasets processed successfully!"
-if [[ "$DRY_RUN" == "true" ]]; then
-  echo "[Dry Run] No changes were made. This was a simulation."
-fi
