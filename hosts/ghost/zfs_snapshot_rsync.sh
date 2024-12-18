@@ -140,12 +140,12 @@ while read -r DATASET; do
   TARGET_DATASET="${TARGET_POOL}/${RELATIVE_PATH}"
 
   log_info "Ensuring target dataset $TARGET_DATASET is mounted..."
-  if ! mountpoint -q "$MOUNT_BASE/$TARGET_DATASET"; then
+  if ! zfs get mounted "$TARGET_DATASET" | grep -q "mounted[[:space:]]*yes"; then
     if [[ "$DRY_RUN" == "true" ]]; then
       log_info "[Dry Run] Would mount $TARGET_DATASET"
     else
-      mkdir -p "$MOUNT_BASE/$TARGET_DATASET"
-      mount -t zfs "$TARGET_DATASET" "$MOUNT_BASE/$TARGET_DATASET"
+      log_info "Mounting target dataset $TARGET_DATASET..."
+      zfs mount "$TARGET_DATASET"
     fi
   else
     log_info "Target dataset $TARGET_DATASET is already mounted."
