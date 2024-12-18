@@ -139,8 +139,8 @@ echo "Starting to process datasets in pool '$POOL_NAME'..."
 for DATASET in $DATASETS; do
   echo "Processing dataset: $DATASET"
 
-  # Get the most recent snapshot
-  SNAPSHOT=$(zfs list -H -o name -t snapshot -r "$DATASET" | tail -n 1)
+  # Get the most recent child snapshot for the dataset
+  SNAPSHOT=$(zfs list -H -o name -t snapshot -r "$DATASET" | grep "^${DATASET}@" | tail -n 1)
 
   if [[ -z "$SNAPSHOT" ]]; then
     echo "  No snapshots found for dataset $DATASET. Skipping."
