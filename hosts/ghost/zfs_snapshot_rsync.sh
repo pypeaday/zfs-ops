@@ -146,8 +146,9 @@ else
   rsync $RSYNC_OPTIONS "${MOUNT_BASE}/" "$DESTINATION/"
 fi
 
-# Unmount all snapshots and clean up
-for MOUNT_POINT in "${MOUNT_POINTS[@]}"; do
+# Now unmount from the deepest child to the parent
+log_info "Unmounting all mount points..."
+for MOUNT_POINT in $(echo "${MOUNT_POINTS[@]}" | tac); do
   if [[ "$DRY_RUN" == "true" ]]; then
     log_info "[Dry Run] Would unmount $MOUNT_POINT"
   else
