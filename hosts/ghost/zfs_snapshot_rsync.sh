@@ -155,7 +155,7 @@ while read -r DATASET; do
 
   # Mount the snapshot
   if [[ "$DRY_RUN" == "true" ]]; then
-    log_info "[Dry Run] Would mount snapshot $SNAPSHOT to $MOUNT_POINT
+    log_info "[Dry Run] Would mount snapshot $SNAPSHOT to $MOUNT_POINT"
   else
     log_info "Mounting snapshot to $MOUNT_POINT..."
     mount -t zfs "$SNAPSHOT" "$MOUNT_POINT"
