@@ -146,9 +146,11 @@ else
   rsync $RSYNC_OPTIONS "${MOUNT_BASE}/" "$DESTINATION/"
 fi
 
-# Now unmount from the deepest child to the parent
-log_info "Unmounting all mount points..."
-for MOUNT_POINT in $(echo "${MOUNT_POINTS[@]}" | tac); do
+# Sort mount points based on depth (most nested first) and reverse the order
+SORTED_MOUNT_POINTS=$(for point in "${MOUNT_POINTS[@]}"; do echo "$point"; done | sort -r)
+
+# Unmount each mount point in reverse order
+for MOUNT_POINT in $SORTED_MOUNT_POINTS; do
   if [[ "$DRY_RUN" == "true" ]]; then
     log_info "[Dry Run] Would unmount $MOUNT_POINT"
   else
