@@ -16,7 +16,7 @@ Usage:
 
 Parameters:
   -p POOL_NAME        ZFS pool name to process (default: "tank").
-  -d DESTINATION      Directory where snapshots will be synced (default: "/backup").
+  -d DESTINATION      Directory where datasets will be synced (default: "/backup").
   -r RSYNC_OPTIONS    Options to pass to the `rsync` command (default: "-av --progress").
   -m MOUNT_BASE       Base directory where snapshots will be temporarily mounted 
                       (default: "/mnt/zfs_snapshots").
@@ -116,6 +116,7 @@ for DATASET in $DATASETS; do
 
   # Prepare mount point
   MOUNT_POINT="${MOUNT_BASE}/${SNAPSHOT//\//_}"
+  DATASET_NAME=$(basename "$DATASET") # Extract the dataset name without pool or snapshot
   if [[ "$DRY_RUN" == "true" ]]; then
     echo "  [Dry Run] Would create mount point: $MOUNT_POINT"
   else
@@ -130,12 +131,14 @@ for DATASET in $DATASETS; do
     zfs mount -o ro "$SNAPSHOT" "$MOUNT_POINT"
   fi
 
-  # Sync the mounted snapshot
+  # Sync the mounted snapshot to the destination using the dataset name
+  TARGET_PATH="${DESTINATION}/${DATASET_NAME}"
   if [[ "$DRY_RUN" == "true" ]]; then
-    echo "  [Dry Run] Would sync $MOUNT_POINT/ to ${DESTINATION}/${SNAPSHOT//\//_}/"
+    echo "  [Dry Run] Would sync $MOUNT_POINT/ to $TARGET_PATH/"
   else
-    echo "  Syncing snapshot to $DESTINATION..."
-    rsync $RSYNC_OPTIONS "$MOUNT_POINT/" "${DESTINATION}/${SNAPSHOT//\//_}/"
+    echo "  Syncing snapshot to $TARGET_PATH..."
+    mkdir -p "$TARGET_PATH"
+    rsync $RSYNC_OPTIONS "$MOUNT_POINT/" "$TARGET_PATH/"
   fi
 
   # Unmount the snapshot
