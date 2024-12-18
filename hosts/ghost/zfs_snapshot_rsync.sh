@@ -140,7 +140,7 @@ for DATASET in $DATASETS; do
   echo "Processing dataset: $DATASET"
 
   # Get the most recent snapshot for this specific dataset
-  SNAPSHOT=$(zfs list -H -o name -t snapshot -r "$DATASET" | grep "^${DATASET}@" | tail -n 1)
+  SNAPSHOT=$(zfs list -H -o name -t snapshot -r "$DATASET" 2>/dev/null | grep "^${DATASET}@" | tail -n 1)
   if [[ -z "$SNAPSHOT" ]]; then
     echo "  No snapshots found for dataset $DATASET. Skipping."
     continue
