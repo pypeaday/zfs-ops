@@ -71,20 +71,21 @@ if [[ "$DRY_RUN" == "false" ]]; then
 fi
 
 # Get datasets in the pool
-DATASETS=$(zfs list -H -o name -t filesystem | grep "^${POOL_NAME}/")
+DATASETS=$(zfs list -H -o name -t filesystem | grep "^${POOL_NAME}/" || true)
 if [[ -z "$DATASETS" ]]; then
   log_warn "No datasets found in pool '$POOL_NAME'."
   exit 1
 fi
 
-log_info "Datasets found in pool '$POOL_NAME':\n$DATASETS"
+log_info "Datasets found in pool '$POOL_NAME':"
+echo "$DATASETS" | while read -r DATASET; do echo "  - $DATASET"; done
 
 # Process each dataset
-for DATASET in $DATASETS; do
+while read -r DATASET; do
   log_info "Processing dataset: $DATASET"
 
   # Get the most recent snapshot
-  SNAPSHOT=$(zfs list -H -o name -t snapshot -r "$DATASET" | grep "^${DATASET}@" | tail -n 1)
+  SNAPSHOT=$(zfs list -H -o name -t snapshot -r "$DATASET" 2>/dev/null | grep "^${DATASET}@" | tail -n 1 || true)
   if [[ -z "$SNAPSHOT" ]]; then
     log_warn "No snapshots found for dataset $DATASET. Skipping."
     continue
@@ -126,6 +127,6 @@ for DATASET in $DATASETS; do
     umount "$MOUNT_POINT"
     rmdir "$MOUNT_POINT"
   fi
-done
+done <<<"$DATASETS"
 
 log_info "Snapshot processing completed."
