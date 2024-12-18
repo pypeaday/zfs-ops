@@ -12,7 +12,7 @@ in a specified ZFS pool, syncing the contents to a specified destination using `
 then unmounting the snapshots. The snapshots are mounted in read-only mode to ensure data integrity.
 
 Usage:
-  ./zfs_snapshot_rsync.sh [-p POOL_NAME] [-d DESTINATION] [-r RSYNC_OPTIONS] [-m MOUNT_BASE]
+  ./zfs_snapshot_rsync.sh [-p POOL_NAME] [-d DESTINATION] [-r RSYNC_OPTIONS] [-m MOUNT_BASE] [-n]
 
 Parameters:
   -p POOL_NAME        ZFS pool name to process (default: "tank").
@@ -20,13 +20,15 @@ Parameters:
   -r RSYNC_OPTIONS    Options to pass to the `rsync` command (default: "-av --progress").
   -m MOUNT_BASE       Base directory where snapshots will be temporarily mounted 
                       (default: "/mnt/zfs_snapshots").
+  -n, --dry-run       Perform a dry run. No snapshots will be mounted or synced, but actions
+                      will be logged as if the script were running.
 
 Examples:
   Sync the most recent snapshots from "tank" to "/backup":
     ./zfs_snapshot_rsync.sh -p tank -d /backup
 
-  Specify custom rsync options and mount directory:
-    ./zfs_snapshot_rsync.sh -r "-aHAX --delete" -m /tmp/mnt_snapshots
+  Specify custom rsync options and enable dry run:
+    ./zfs_snapshot_rsync.sh -r "-a --delete" -n
 
   Use environment variables for configuration:
     export POOL_NAME=tank
@@ -43,36 +45,45 @@ Notes:
   - Errors in mounting or unmounting are logged to the console.
   - Ensure you have enough storage space at the destination for the data being synced.
 '
+
 # Default parameters (can be overridden by arguments or environment variables)
 POOL_NAME=${POOL_NAME:-tank}
 DESTINATION=${DESTINATION:-/backup}
 RSYNC_OPTIONS=${RSYNC_OPTIONS:-"-av --progress"}
 MOUNT_BASE=${MOUNT_BASE:-/mnt/zfs_snapshots}
+DRY_RUN=false
 
 # Helper function to print usage
 usage() {
-  echo "Usage: $0 [-p POOL_NAME] [-d DESTINATION] [-r RSYNC_OPTIONS] [-m MOUNT_BASE]"
+  echo "Usage: $0 [-p POOL_NAME] [-d DESTINATION] [-r RSYNC_OPTIONS] [-m MOUNT_BASE] [-n]"
   echo "  -p POOL_NAME        ZFS pool name (default: 'tank')"
   echo "  -d DESTINATION      Destination for rsync (default: '/backup')"
   echo "  -r RSYNC_OPTIONS    Options passed to rsync (default: '-av --progress')"
   echo "  -m MOUNT_BASE       Base directory to mount snapshots (default: '/mnt/zfs_snapshots')"
+  echo "  -n, --dry-run       Perform a dry run (log actions without executing them)."
   exit 1
 }
 
 # Parse command-line arguments
-while getopts ":p:d:r:m:h" opt; do
+while getopts ":p:d:r:m:nh-:" opt; do
   case "${opt}" in
   p) POOL_NAME=${OPTARG} ;;
   d) DESTINATION=${OPTARG} ;;
   r) RSYNC_OPTIONS=${OPTARG} ;;
   m) MOUNT_BASE=${OPTARG} ;;
+  n) DRY_RUN=true ;;
+  -) # Handle long options
+    case "${OPTARG}" in
+    dry-run) DRY_RUN=true ;;
+    *) usage ;;
+    esac ;;
   h) usage ;;
   *) usage ;;
   esac
 done
 
 # Verify that the destination directory exists
-if [[ ! -d "$DESTINATION" ]]; then
+if [[ ! -d "$DESTINATION" && "$DRY_RUN" == "false" ]]; then
   echo "Error: Destination directory '$DESTINATION' does not exist."
   exit 1
 fi
@@ -105,22 +116,39 @@ for DATASET in $DATASETS; do
 
   # Prepare mount point
   MOUNT_POINT="${MOUNT_BASE}/${SNAPSHOT//\//_}"
-  mkdir -p "$MOUNT_POINT"
+  if [[ "$DRY_RUN" == "true" ]]; then
+    echo "  [Dry Run] Would create mount point: $MOUNT_POINT"
+  else
+    mkdir -p "$MOUNT_POINT"
+  fi
 
   # Mount the snapshot in read-only mode
-  echo "  Mounting snapshot to $MOUNT_POINT..."
-  zfs mount -o ro "$SNAPSHOT" "$MOUNT_POINT"
+  if [[ "$DRY_RUN" == "true" ]]; then
+    echo "  [Dry Run] Would mount snapshot $SNAPSHOT to $MOUNT_POINT (read-only)"
+  else
+    echo "  Mounting snapshot to $MOUNT_POINT..."
+    zfs mount -o ro "$SNAPSHOT" "$MOUNT_POINT"
+  fi
 
   # Sync the mounted snapshot
-  echo "  Syncing snapshot to $DESTINATION..."
-  rsync $RSYNC_OPTIONS "$MOUNT_POINT/" "${DESTINATION}/${SNAPSHOT//\//_}/"
+  if [[ "$DRY_RUN" == "true" ]]; then
+    echo "  [Dry Run] Would sync $MOUNT_POINT/ to ${DESTINATION}/${SNAPSHOT//\//_}/"
+  else
+    echo "  Syncing snapshot to $DESTINATION..."
+    rsync $RSYNC_OPTIONS "$MOUNT_POINT/" "${DESTINATION}/${SNAPSHOT//\//_}/"
+  fi
 
   # Unmount the snapshot
-  echo "  Unmounting snapshot from $MOUNT_POINT..."
-  umount "$MOUNT_POINT"
-
-  # Cleanup mount point
-  rmdir "$MOUNT_POINT"
+  if [[ "$DRY_RUN" == "true" ]]; then
+    echo "  [Dry Run] Would unmount $MOUNT_POINT"
+  else
+    echo "  Unmounting snapshot from $MOUNT_POINT..."
+    umount "$MOUNT_POINT"
+    rmdir "$MOUNT_POINT"
+  fi
 done
 
 echo "All datasets processed successfully!"
+if [[ "$DRY_RUN" == "true" ]]; then
+  echo "[Dry Run] No changes were made. This was a simulation."
+fi
