@@ -116,6 +116,34 @@ while read -r DATASET; do
   fi
   log_info "Found snapshot: $SNAPSHOT"
 
+  # Ensure analogous child datasets in the target pool are mounted
+  log_info "Ensuring analogous child datasets in the target pool ($DESTINATION) are mounted..."
+
+  # strip the leading / from DESTINGATION
+  # example: /harbor -> harbor
+  TARGET_POOL="${DESTINATION#/}"
+  for DATASET in $DATASETS; do
+    # Generate the analogous dataset name in the target pool
+    RELATIVE_PATH="${DATASET#$POOL_NAME/}"
+    TARGET_DATASET="${TARGET_POOL}/${RELATIVE_PATH}"
+
+    # Check if the target dataset is mounted
+    if ! mountpoint -q "$MOUNT_BASE/$TARGET_DATASET"; then
+      log_info "Target dataset $TARGET_DATASET is not mounted. Mounting it..."
+
+      # If not mounted, mount the target dataset
+      if [[ "$DRY_RUN" == "true" ]]; then
+        log_info "[Dry Run] Would mount $TARGET_DATASET"
+      else
+        # Ensure the mountpoint directory exists
+        mkdir -p "$MOUNT_BASE/$TARGET_DATASET"
+        mount -t zfs "$TARGET_DATASET" "$MOUNT_BASE/$TARGET_DATASET"
+      fi
+    else
+      log_info "Target dataset $TARGET_DATASET is already mounted."
+    fi
+  done
+
   # Mount the snapshot with correct directory hierarchy
   MOUNT_POINT="${MOUNT_BASE}/${DATASET#${POOL_NAME}/}"
   # Create the directory structure if it doesn't exist
