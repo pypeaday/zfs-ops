@@ -17,7 +17,7 @@ Usage:
 Parameters:
   -p POOL_NAME        ZFS pool name to process (default: "tank").
   -d DESTINATION      Directory where datasets will be synced (default: "/backup").
-  -r RSYNC_OPTIONS    Options to pass to the `rsync` command (default: "-av --progress").
+  -r RSYNC_OPTIONS    Options to pass to the `rsync` command (default: "-aHAX --chmod=Da+s --info=progress2 --inplace  --delete").
   -m MOUNT_BASE       Base directory where snapshots will be temporarily mounted 
                       (default: "/mnt/zfs_snapshots").
   -n, --dry-run       Perform a dry run. No snapshots will be mounted or synced, but actions
@@ -44,12 +44,48 @@ Notes:
   - The script cleans up mount points after syncing to avoid clutter.
   - Errors in mounting or unmounting are logged to the console.
   - Ensure you have enough storage space at the destination for the data being synced.
+
+Default rsync options breakdown:
+
+  -a (archive mode): 
+  ensures that symbolic links, permissions, ownership, timestamps, and
+  directories are preserved. It is a shorthand for -rlptgoD.
+
+  -H (preserve hard links): 
+    If your source contains hard links, this option will
+    ensure that the hard links are preserved during the sync.
+
+  -A (preserve ACLs)
+
+  -X (preserve extended attributes): 
+    Extended attributes are filesystem-specific attributes used by various
+    systems (e.g., SELinux, Apple file systems, etc.). This ensures they are
+    copied as well.
+
+  --chmod=Da+s (apply file permissions): 
+    Modifies file permissions during the sync. Specifically:
+
+      D ensures that directories have proper permissions. 
+      a+s ensures that the "setuid" and "setgid" bits are preserved for
+      executable files. 
+
+  --info=progress2 (show progress): 
+    Provides detailed progress information, including the number of files
+    transferred and the total transfer speed.
+
+  --inplace (update files in place): 
+    Update the files in the destination directory in place instead of creating
+    temporary copies.
+
+  --delete (remove extraneous files): 
+    Makes the destination folder mirror the source exactly. Files
+    in the destination that do not exist in the source will be deleted. 
 '
 
 # Default parameters
 POOL_NAME=${POOL_NAME:-tank}
 DESTINATION=${DESTINATION:-/backup}
-RSYNC_OPTIONS=${RSYNC_OPTIONS:-"-av --progress"}
+RSYNC_OPTIONS=${RSYNC_OPTIONS:-"-aHAX --chmod=Da+s --info=progress2 --inplace  --delete"}
 MOUNT_BASE=${MOUNT_BASE:-/mnt/zfs_snapshots}
 DRY_RUN=false
 
@@ -57,7 +93,7 @@ usage() {
   echo "Usage: $0 [-p POOL_NAME] [-d DESTINATION] [-r RSYNC_OPTIONS] [-m MOUNT_BASE] [-n]"
   echo "  -p POOL_NAME        ZFS pool name (default: 'tank')"
   echo "  -d DESTINATION      Destination for rsync (default: '/backup')"
-  echo "  -r RSYNC_OPTIONS    Options passed to rsync (default: '-av --progress')"
+  echo "  -r RSYNC_OPTIONS    Options passed to rsync (default: '-aHAX --chmod=Da+s --info=progress2 --inplace  --delete')"
   echo "  -m MOUNT_BASE       Base directory to mount snapshots (default: '/mnt/zfs_snapshots')"
   echo "  -n, --dry-run       Perform a dry run (log actions without executing them)."
   exit 1
