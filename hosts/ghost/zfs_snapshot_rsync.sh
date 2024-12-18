@@ -7,7 +7,7 @@ set -euo pipefail
 #
 # This script performs the following actions:
 # 1. Identifies all datasets within the specified ZFS pool.
-# 2. Mounts the most recent snapshot for each dataset in a read-only mode.
+# 2. Mounts the most recent snapshot for each dataset to a temporary mount point.
 # 3. Uses `rsync` to recursively synchronize the dataset snapshot to a target directory.
 # 4. Unmounts and removes the snapshot mount points after the sync is complete.
 #
@@ -127,7 +127,7 @@ while read -r DATASET; do
 
   # Mount the snapshot
   if [[ "$DRY_RUN" == "true" ]]; then
-    log_info "[Dry Run] Would mount snapshot $SNAPSHOT to $MOUNT_POINT (read-only)"
+    log_info "[Dry Run] Would mount snapshot $SNAPSHOT to $MOUNT_POINT
   else
     log_info "Mounting snapshot to $MOUNT_POINT..."
     mount -t zfs "$SNAPSHOT" "$MOUNT_POINT"
