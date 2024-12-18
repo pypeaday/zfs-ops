@@ -7,6 +7,7 @@ It is assumed to be a Debian/Ubuntu machine
 # TODO
 
 1. don't use `hosts` folder. Change that to a server directory with functional names like "AppSrvPrd" etc.
+2. Aurora backup is broken because I can't install syncoid/sanoid on the host, and I can't see the zfs datasets in an ubuntu distrobox
 
 ## What This Does NOT Do
 
