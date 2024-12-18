@@ -126,27 +126,25 @@ fi
 # Create the mount base if it doesn't exist
 mkdir -p "$MOUNT_BASE"
 
-# Get the datasets in the pool
-DATASETS=$(zfs list -H -o name -t filesystem | grep "^${POOL_NAME}")
+# Get the datasets in the pool (exclude the pool name itself)
+DATASETS=$(zfs list -H -o name -t filesystem | grep "^${POOL_NAME}/")
 
 if [[ -z "$DATASETS" ]]; then
   echo "No datasets found in pool '$POOL_NAME'."
   exit 1
 fi
+echo "Datasets found: $DATASETS"
 
 echo "Starting to process datasets in pool '$POOL_NAME'..."
-
 for DATASET in $DATASETS; do
   echo "Processing dataset: $DATASET"
 
-  # Get the most recent child snapshot for the dataset
-  SNAPSHOT=$(zfs list -H -o name -t snapshot -r "$DATASET" | grep "^${DATASET}@" | tail -n 1)
-
+  # Get the most recent snapshot
+  SNAPSHOT=$(zfs list -H -o name -t snapshot -r "$DATASET" | tail -n 1)
   if [[ -z "$SNAPSHOT" ]]; then
     echo "  No snapshots found for dataset $DATASET. Skipping."
     continue
   fi
-
   echo "  Found snapshot: $SNAPSHOT"
 
   # Prepare mount point based on dataset name
