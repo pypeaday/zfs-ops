@@ -130,7 +130,7 @@ while read -r DATASET; do
     log_info "[Dry Run] Would mount snapshot $SNAPSHOT to $MOUNT_POINT (read-only)"
   else
     log_info "Mounting snapshot to $MOUNT_POINT..."
-    zfs mount -o ro "$SNAPSHOT" "$MOUNT_POINT"
+    mount -t zfs "$SNAPSHOT" "$MOUNT_POINT"
   fi
 
   # Add mount point to the list
