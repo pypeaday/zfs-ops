@@ -3,6 +3,27 @@
 # Exit on error
 set -euo pipefail
 
+# Script to replicate ZFS datasets from a source pool to a target directory using snapshots.
+#
+# This script performs the following actions:
+# 1. Identifies all datasets within the specified ZFS pool.
+# 2. Mounts the most recent snapshot for each dataset in a read-only mode.
+# 3. Uses `rsync` to recursively synchronize the dataset snapshot to a target directory.
+# 4. Unmounts and removes the snapshot mount points after the sync is complete.
+#
+# The script supports dry-run mode for simulating the process without making any changes.
+# It also provides debug logging to trace the execution in more detail.
+#
+# Parameters:
+# - POOL_NAME: The name of the source ZFS pool (default: 'tank').
+# - DESTINATION: The target directory for the rsync operation (default: '/backup').
+# - RSYNC_OPTIONS: Options passed to `rsync` for file synchronization (default: '-aHAX --chmod=Da+s --info=progress2 --inplace --delete').
+# - MOUNT_BASE: The base directory where ZFS snapshots will be mounted temporarily (default: '/mnt/zfs_snapshots').
+# - --dry-run: If specified, the script performs a dry run without making changes.
+# - --debug: If specified, the script enables debug mode for detailed logging.
+#
+# The script ensures that only the latest available snapshot of each dataset is used and ensures the integrity of the replication process by maintaining directory structure and synchronization status.
+
 # Default parameters
 POOL_NAME=${POOL_NAME:-tank}
 DESTINATION=${DESTINATION:-/backup}
@@ -95,8 +116,9 @@ while read -r DATASET; do
   fi
   log_info "Found snapshot: $SNAPSHOT"
 
-  # Prepare mount point
-  MOUNT_POINT="${MOUNT_BASE}/${DATASET//\//_}"
+  # Mount the snapshot with correct directory hierarchy
+  MOUNT_POINT="${MOUNT_BASE}/${DATASET#${POOL_NAME}/}"
+  # Create the directory structure if it doesn't exist
   if [[ "$DRY_RUN" == "true" ]]; then
     log_info "[Dry Run] Would create mount point: $MOUNT_POINT"
   else
