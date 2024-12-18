@@ -80,7 +80,10 @@ fi
 log_info "Datasets found in pool '$POOL_NAME':"
 echo "$DATASETS" | while read -r DATASET; do echo "  - $DATASET"; done
 
-# Process each dataset
+# Prepare an array for all mount points
+MOUNT_POINTS=()
+
+# Mount the most recent snapshot for each dataset
 while read -r DATASET; do
   log_info "Processing dataset: $DATASET"
 
@@ -108,18 +111,21 @@ while read -r DATASET; do
     zfs mount -o ro "$SNAPSHOT" "$MOUNT_POINT"
   fi
 
-  # Sync snapshot to destination
-  RELATIVE_PATH="${DATASET#$POOL_NAME/}"
-  TARGET_PATH="${DESTINATION}/${RELATIVE_PATH}"
-  if [[ "$DRY_RUN" == "true" ]]; then
-    log_info "[Dry Run] Would sync $MOUNT_POINT/ to $TARGET_PATH/"
-  else
-    log_info "Syncing snapshot to $TARGET_PATH..."
-    mkdir -p "$TARGET_PATH"
-    rsync $RSYNC_OPTIONS "$MOUNT_POINT/" "$TARGET_PATH/"
-  fi
+  # Add mount point to the list
+  MOUNT_POINTS+=("$MOUNT_POINT")
 
-  # Unmount snapshot
+done <<<"$DATASETS"
+
+# Rsync from all mounted snapshots to the destination
+log_info "Starting rsync operation..."
+if [[ "$DRY_RUN" == "true" ]]; then
+  log_info "[Dry Run] Would sync from ${MOUNT_BASE}/ to ${DESTINATION}/"
+else
+  rsync $RSYNC_OPTIONS "${MOUNT_BASE}/" "$DESTINATION/"
+fi
+
+# Unmount all snapshots and clean up
+for MOUNT_POINT in "${MOUNT_POINTS[@]}"; do
   if [[ "$DRY_RUN" == "true" ]]; then
     log_info "[Dry Run] Would unmount $MOUNT_POINT"
   else
@@ -127,6 +133,6 @@ while read -r DATASET; do
     umount "$MOUNT_POINT"
     rmdir "$MOUNT_POINT"
   fi
-done <<<"$DATASETS"
+done
 
 log_info "Snapshot processing completed."
