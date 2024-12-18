@@ -104,7 +104,7 @@ echo "$DATASETS" | while read -r DATASET; do echo "  - $DATASET"; done
 # Prepare an array for all mount points
 MOUNT_POINTS=()
 
-# Mount the most recent snapshot for each dataset
+# Process each dataset
 while read -r DATASET; do
   log_info "Processing dataset: $DATASET"
 
@@ -116,44 +116,14 @@ while read -r DATASET; do
   fi
   log_info "Found snapshot: $SNAPSHOT"
 
-  # Ensure analogous child datasets in the target pool are mounted
-  log_info "Ensuring analogous child datasets in the target pool ($DESTINATION) are mounted..."
-
-  # strip the leading / from DESTINGATION
-  # example: /harbor -> harbor
-  TARGET_POOL="${DESTINATION#/}"
-  for DATASET in $DATASETS; do
-    # Generate the analogous dataset name in the target pool
-    RELATIVE_PATH="${DATASET#$POOL_NAME/}"
-    TARGET_DATASET="${TARGET_POOL}/${RELATIVE_PATH}"
-
-    # Check if the target dataset is mounted
-    if ! mountpoint -q "$MOUNT_BASE/$TARGET_DATASET"; then
-      log_info "Target dataset $TARGET_DATASET is not mounted. Mounting it..."
-
-      # If not mounted, mount the target dataset
-      if [[ "$DRY_RUN" == "true" ]]; then
-        log_info "[Dry Run] Would mount $TARGET_DATASET"
-      else
-        # Ensure the mountpoint directory exists
-        mkdir -p "$MOUNT_BASE/$TARGET_DATASET"
-        mount -t zfs "$TARGET_DATASET" "$MOUNT_BASE/$TARGET_DATASET"
-      fi
-    else
-      log_info "Target dataset $TARGET_DATASET is already mounted."
-    fi
-  done
-
-  # Mount the snapshot with correct directory hierarchy
+  # Mount the snapshot to a temporary location
   MOUNT_POINT="${MOUNT_BASE}/${DATASET#${POOL_NAME}/}"
-  # Create the directory structure if it doesn't exist
   if [[ "$DRY_RUN" == "true" ]]; then
     log_info "[Dry Run] Would create mount point: $MOUNT_POINT"
   else
     mkdir -p "$MOUNT_POINT"
   fi
 
-  # Mount the snapshot
   if [[ "$DRY_RUN" == "true" ]]; then
     log_info "[Dry Run] Would mount snapshot $SNAPSHOT to $MOUNT_POINT"
   else
@@ -163,6 +133,23 @@ while read -r DATASET; do
 
   # Add mount point to the list
   MOUNT_POINTS+=("$MOUNT_POINT")
+
+  # Ensure analogous child datasets in the target pool are mounted
+  TARGET_POOL="${DESTINATION#/}"
+  RELATIVE_PATH="${DATASET#$POOL_NAME/}"
+  TARGET_DATASET="${TARGET_POOL}/${RELATIVE_PATH}"
+
+  log_info "Ensuring target dataset $TARGET_DATASET is mounted..."
+  if ! mountpoint -q "$MOUNT_BASE/$TARGET_DATASET"; then
+    if [[ "$DRY_RUN" == "true" ]]; then
+      log_info "[Dry Run] Would mount $TARGET_DATASET"
+    else
+      mkdir -p "$MOUNT_BASE/$TARGET_DATASET"
+      mount -t zfs "$TARGET_DATASET" "$MOUNT_BASE/$TARGET_DATASET"
+    fi
+  else
+    log_info "Target dataset $TARGET_DATASET is already mounted."
+  fi
 
 done <<<"$DATASETS"
 
