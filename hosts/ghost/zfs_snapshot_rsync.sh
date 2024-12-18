@@ -128,7 +128,11 @@ while read -r DATASET; do
     log_info "[Dry Run] Would mount snapshot $SNAPSHOT to $MOUNT_POINT"
   else
     log_info "Mounting snapshot to $MOUNT_POINT..."
-    mount -t zfs "$SNAPSHOT" "$MOUNT_POINT"
+    if ! mount -t zfs "$SNAPSHOT" "$MOUNT_POINT"; then
+      log_error "Failed to mount snapshot $SNAPSHOT to $MOUNT_POINT. Skipping this dataset."
+      rmdir "$MOUNT_POINT" # Remove the created mount point if mounting fails
+      continue             # Skip this dataset and move on to the next one
+    fi
   fi
 
   # Add mount point to the list
@@ -145,12 +149,16 @@ while read -r DATASET; do
       log_info "[Dry Run] Would mount $TARGET_DATASET"
     else
       log_info "Mounting target dataset $TARGET_DATASET..."
-      zfs mount "$TARGET_DATASET"
+      if ! zfs mount "$TARGET_DATASET"; then
+        log_error "Failed to mount target dataset $TARGET_DATASET. Skipping this dataset."
+        umount "$MOUNT_POINT" # Unmount the snapshot
+        rmdir "$MOUNT_POINT"  # Remove mount point if target fails to mount
+        continue              # Skip this dataset and move on to the next one
+      fi
     fi
   else
     log_info "Target dataset $TARGET_DATASET is already mounted."
   fi
-
 done <<<"$DATASETS"
 
 # Rsync from all mounted snapshots to the destination
@@ -158,7 +166,10 @@ log_info "Starting rsync operation..."
 if [[ "$DRY_RUN" == "true" ]]; then
   log_info "[Dry Run] Would sync from ${MOUNT_BASE}/ to ${DESTINATION}/"
 else
-  rsync $RSYNC_OPTIONS "${MOUNT_BASE}/" "$DESTINATION/"
+  if ! rsync $RSYNC_OPTIONS "${MOUNT_BASE}/" "$DESTINATION/"; then
+    log_error "Rsync failed. Backup operation aborted."
+    exit 1
+  fi
 fi
 
 # Sort mount points based on depth (most nested first) and reverse the order
