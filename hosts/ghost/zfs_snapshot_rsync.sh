@@ -46,14 +46,13 @@ Notes:
   - Ensure you have enough storage space at the destination for the data being synced.
 '
 
-# Default parameters (can be overridden by arguments or environment variables)
+# Default parameters
 POOL_NAME=${POOL_NAME:-tank}
 DESTINATION=${DESTINATION:-/backup}
 RSYNC_OPTIONS=${RSYNC_OPTIONS:-"-av --progress"}
 MOUNT_BASE=${MOUNT_BASE:-/mnt/zfs_snapshots}
 DRY_RUN=false
 
-# Helper function to print usage
 usage() {
   echo "Usage: $0 [-p POOL_NAME] [-d DESTINATION] [-r RSYNC_OPTIONS] [-m MOUNT_BASE] [-n]"
   echo "  -p POOL_NAME        ZFS pool name (default: 'tank')"
@@ -82,7 +81,7 @@ while getopts ":p:d:r:m:nh-:" opt; do
   esac
 done
 
-# Verify that the destination directory exists
+# Ensure destination directory exists
 if [[ ! -d "$DESTINATION" && "$DRY_RUN" == "false" ]]; then
   echo "Error: Destination directory '$DESTINATION' does not exist."
   exit 1
@@ -114,9 +113,8 @@ for DATASET in $DATASETS; do
 
   echo "  Found snapshot: $SNAPSHOT"
 
-  # Prepare mount point
-  MOUNT_POINT="${MOUNT_BASE}/${SNAPSHOT//\//_}"
-  DATASET_NAME=$(basename "$DATASET") # Extract the dataset name without pool or snapshot
+  # Prepare mount point based on dataset name
+  MOUNT_POINT="${MOUNT_BASE}/${DATASET//\//_}"
   if [[ "$DRY_RUN" == "true" ]]; then
     echo "  [Dry Run] Would create mount point: $MOUNT_POINT"
   else
@@ -131,8 +129,11 @@ for DATASET in $DATASETS; do
     zfs mount -o ro "$SNAPSHOT" "$MOUNT_POINT"
   fi
 
-  # Sync the mounted snapshot to the destination using the dataset name
-  TARGET_PATH="${DESTINATION}/${DATASET_NAME}"
+  # Determine target path, preserving hierarchy
+  RELATIVE_PATH="${DATASET#$POOL_NAME/}" # Strip the pool name from the dataset path
+  TARGET_PATH="${DESTINATION}/${RELATIVE_PATH}"
+
+  # Sync the mounted snapshot to the target destination
   if [[ "$DRY_RUN" == "true" ]]; then
     echo "  [Dry Run] Would sync $MOUNT_POINT/ to $TARGET_PATH/"
   else
