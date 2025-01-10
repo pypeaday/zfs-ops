@@ -18,6 +18,8 @@ syncoid --no-sync-snap --no-privilege-elevation --create-bookmark --no-resume ni
 syncoid --no-sync-snap --no-privilege-elevation --create-bookmark --no-resume nic@ghost:tank/encrypted/vms/pihole tank/unencrypted_backup/vms/pihole
 syncoid --no-sync-snap --no-privilege-elevation --create-bookmark --no-resume nic@ghost:tank/encrypted/vms/homeassistant tank/unencrypted_backup/vms/homeassistant
 
+syncoid --no-sync-snap --no-privilege-elevation --create-bookmark --no-resume nic@ghost:tank/encrypted/docker/paperless-ngx tank/unencrypted_backup/docker/paperless-ngx
+
 # TODO: rsync home folder on aurora to a backup on local tank or to ghost
 
 # hcio

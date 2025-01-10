@@ -41,6 +41,10 @@ curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/ghost-vault-next
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/docker/nextcloud-zfs tank/encrypted/docker/nextcloud-zfs
 curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/ghost-vault-nextcloud
 
+curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/ghost-vault-paperless/start
+syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/docker/paperless-ngx tank/encrypted/docker/paperless-ngx
+curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/ghost-vault-paperless
+
 curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/ghost-vault-nas/start
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation --create-bookmark --no-resume nic@ghost:tank/encrypted/nas tank/encrypted/nas
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation --create-bookmark --no-resume nic@ghost:tank/encrypted/nas/documents tank/encrypted/nas/documents
