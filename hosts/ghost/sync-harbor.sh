@@ -31,8 +31,8 @@ curl https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/harbor-replication/start
 # Preserves ZFS dataset properties (like compression, deduplication, mountpoints, etc.) during replication.
 
 # TODO: change to --exclude-datasets once I update sanoid/syncoid on ghost
-# syncoid --no-sync-snap --sendoptions=w -r --no-privilege-elevation --create-bookmark --no-resume --preserve-properties --exclude-datasets tank/encrypted/docker/frigate-media --exclude-datasets tank/encrypted/nas/documents/paperless/consume tank/encrypted harbor/encrypted
-syncoid --skip-parent --no-sync-snap --sendoptions=w -r --no-privilege-elevation --create-bookmark --no-resume --preserve-properties --exclude tank/encrypted/docker/frigate-media --exclude tank/encrypted/nas/documents/paperless/consume --exclude tank/encrypted/10fold tank/encrypted harbor/encrypted
+# syncoid --no-sync-snap --sendoptions=w -r --no-privilege-elevation --create-bookmark --no-resume --preserve-properties  --exclude-datasets tank/encrypted/nas/documents/paperless/consume tank/encrypted harbor/encrypted
+syncoid --skip-parent --no-sync-snap --sendoptions=w -r --no-privilege-elevation --create-bookmark --no-resume --preserve-properties --exclude tank/encrypted/nas/documents/paperless/consume tank/encrypted harbor/encrypted
 
 # hcio
 curl https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/harbor-replication
