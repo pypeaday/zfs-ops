@@ -29,3 +29,7 @@ There is a folder for each of my machines right now with the sanoid/syncoid rela
 `setup_sanoid`, `setup_syncoid`, and `install_zfs`
 
 There's a caveat to the folder matching the `hostname` because that's assumed in the `syncoid-replication.service` file
+
+### Harbor backup
+
+Harbor is one of my on-prem backups, on ghost there is a systemd service to sync harbor. Recipe in justfile
