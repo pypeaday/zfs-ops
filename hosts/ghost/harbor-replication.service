@@ -1,0 +1,11 @@
+[Unit]
+Description=ZFS Replication With Syncoid
+
+[Service]
+Type=oneshot
+ExecStart=/home/nic/zfs-ops/hosts/ghost/sync-harbor.sh
+User=nic
+Group=nic
+
+[Install]
+WantedBy=multi-user.target

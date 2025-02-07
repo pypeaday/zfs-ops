@@ -36,3 +36,13 @@ setup-babyblue:
 
     just setup babyblue
 
+setup-harbor:
+    #!/usr/bin/env bash
+    set -euxo pipefail
+
+    sudo cp ./hosts/ghost/harbor-replication.service /etc/systemd/system/harbor-replication.service
+    sudo cp ./hosts/ghost/harbor-replication.timer /etc/systemd/system/harbor-replication.timer
+
+    sudo systemctl daemon-reload
+    sudo systemctl enable harbor-replication.timer
+    sudo systemctl start harbor-replication.timer
