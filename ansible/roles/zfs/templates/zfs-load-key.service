@@ -1,0 +1,14 @@
+[Unit]
+Description=Load all ZFS keys recursively
+DefaultDependencies=no
+Before=zfs-mount.service
+After=zfs-import.target
+Requires=zfs-import.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/sbin/zfs load-key -r -a
+
+[Install]
+WantedBy=zfs-mount.service

@@ -1,35 +1,62 @@
 # ZFS Ops
 
-This repo is for housing ZFS related configuration - specifically sanoid configuration and syncoid scripts for my various machines
+This repo contains ZFS replication configurations and scripts for my various machines. It uses systemd timers to schedule regular ZFS dataset replication between hosts.
 
-It is assumed to be a Debian/Ubuntu machine
+## Overview
 
-# TODO
+The repository is organized by host, with each host having its own replication configuration:
 
-1. don't use `hosts` folder. Change that to a server directory with functional names like "AppSrvPrd" etc.
-2. Aurora backup is broken because I can't install syncoid/sanoid on the host, and I can't see the zfs datasets in an ubuntu distrobox
+```
+hosts/
+  ├── ghost/                 # Primary server
+  │   ├── harbor-replication.service
+  │   ├── harbor-replication.timer
+  │   └── syncoid-replication.sh
+  └── ghost-vault/          # Backup server
+      ├── syncoid-replication.service
+      ├── syncoid-replication.timer
+      └── syncoid-replication.sh
+```
 
-## What This Does NOT Do
+## Replication Schedule
 
-This ansible role does not setup any ZFS datasets - it just installs the zfs library and then sets up sanoid and syncoid using sanoid conf specific to each of my hosts. The ZFS dataset creation is left up to me to do manually right now - I'm not sure what a good pattern would be for any automatic dataset creation, but a #TODO for me is to document permissions for the user and datasets
+- Harbor replication runs on even hours (0,2,4,...,22)
+- Syncoid replication runs on odd hours (1,3,5,...,23)
 
-## Running Things
-
-To run things I'm using [just](https://github.com/casey/just)
-
-`curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to ~/.local/bin`
+This ensures that replications don't overlap and are spread evenly throughout the day.
 
 ## Setup
 
-1. clone repo to $HOME (assumed for syncoid replication scripts and sanoid conf links)
-2. run `just sanoid`
+1. Clone this repo to your home directory:
+   ```bash
+   git clone <repo-url> ~/zfs-ops
+   ```
 
-There is a folder for each of my machines right now with the sanoid/syncoid related configuration. The playbook takes 3 variables which I just handle at runtime in my `justfile`
+2. Install dependencies:
+   - sanoid/syncoid (for ZFS snapshot management and replication)
+   - [just](https://github.com/casey/just) for running setup recipes
+   ```bash
+   curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to ~/.local/bin
+   ```
 
-`setup_sanoid`, `setup_syncoid`, and `install_zfs`
+3. Run the appropriate setup recipe for your host:
+   ```bash
+   just setup-ghost      # For ghost server
+   just setup-ghost-vault # For ghost-vault server
+   ```
 
-There's a caveat to the folder matching the `hostname` because that's assumed in the `syncoid-replication.service` file
+## Available Recipes
 
-### Harbor backup
+- `setup-ghost`: Sets up harbor replication on the ghost server
+- `setup-ghost-vault`: Sets up syncoid replication on the ghost-vault server
+- `setup-harbor`: Installs and enables the harbor replication systemd service/timer
 
-Harbor is one of my on-prem backups, on ghost there is a systemd service to sync harbor. Recipe in justfile
+## Notes
+
+- The repository assumes installation in the home directory as some scripts reference absolute paths
+- Healthcheck URLs in the replication scripts should be updated with your own URLs
+- ZFS dataset creation and permissions are not handled by this repository - they must be set up manually
+
+## Legacy
+
+The `ansible/` directory contains the old ansible-based setup which is being phased out in favor of direct systemd service management.

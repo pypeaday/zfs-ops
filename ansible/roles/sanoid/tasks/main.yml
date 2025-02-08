@@ -13,7 +13,7 @@
     sanoid_installed: "{{sanoid_installed|default(false)|bool}}"
 
 - name: Setup Sanoid
-  when: setup_sanoid|string == "true" and not sanoid_installed
+  when: not sanoid_installed
   block:
     - name: Install Prerequisite software
       apt:
@@ -67,33 +67,3 @@
         name: sanoid
         state: started
         enabled: true
-
-- name: Setup Syncoid
-  when: setup_syncoid|string == "true"
-  block:
-    - name: Add syncoid service
-      become: true
-      template:
-        src: syncoid-replication.service.j2
-        dest: /etc/systemd/system/syncoid-replication.service
-
-    - name: Ensure syncoid started
-      ignore_errors: true
-      service:
-        name: syncoid-replication
-        enabled: true
-
-    - name: Add syncoid timer
-      ignore_errors: true
-      become: true
-      template:
-        src: syncoid-replication.timer
-        dest: /etc/systemd/system/syncoid-replication.timer
-
-    - name: Enable syncoid timer
-      ignore_errors: true
-      become: true
-      ansible.builtin.shell: |
-        # enable and start the sanoid timer
-        sudo systemctl enable syncoid-replication.timer
-        sudo systemctl start syncoid-replication.timer

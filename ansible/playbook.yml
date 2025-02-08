@@ -6,8 +6,7 @@
       become: true
       tags:
         - zfs
-    - role: sanoid-and-syncoid
+    - role: sanoid
       become: true
       tags:
         - sanoid
-        - oids

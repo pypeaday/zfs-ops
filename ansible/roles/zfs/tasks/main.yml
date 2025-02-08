@@ -1,5 +1,28 @@
-- name: Setup ZFS
-  when: install_zfs|string == "true"
+---
+- name: Check prerequisites
+  block:
+    - name: Check if ZFS is installed
+      ansible.builtin.command: which zfs
+      register: zfs_installed
+      ignore_errors: yes
+      changed_when: false
+      failed_when: false
+
+    - name: Set zfs_installed fact
+      set_fact:
+        zfs_installed: "{{ not 'which: no zfs in' in zfs_installed.stderr }}"
+
+    - name: Check if docker-wait service exists
+      ansible.builtin.stat:
+        path: /etc/systemd/system/docker-wait-for-zfs.service
+      register: docker_wait_service
+
+    - name: Check if zfs-load-key service exists
+      ansible.builtin.stat:
+        path: /etc/systemd/system/zfs-load-key.service
+      register: zfs_load_key_service
+
+- name: Install and configure ZFS
   block:
     - name: Install Prerequisite software
       apt:
@@ -14,21 +37,38 @@
           - zfsutils-linux
           - zfs-dkms
 
-    - name: Check if service exists
-      command: "systemctl status docker-wait-for-zfs.service"
-      register: service_status
-      changed_when: false
-      failed_when: "'Loaded: not-found' in service_status.stdout"
+    - name: Install ZFS packages
+      apt:
+        pkg:
+          - zfsutils-linux
+          - zfs-dkms
+        state: present
+  when: not zfs_installed
 
+- name: Configure docker-wait service
+  block:
     - name: Add docker wait service
       template:
         src: docker-wait-for-zfs.service
         dest: /etc/systemd/system/docker-wait-for-zfs.service
       register: docker_wait_zfs
-      when: "'Loaded: not-found' in service_status.stdout"
 
     - name: Ensure docker wait for zfs service
       service:
         name: docker-wait-for-zfs
         state: started
         enabled: true
+  when: not docker_wait_service.stat.exists
+
+- name: Configure zfs-load-key service
+  block:
+    - name: Add zfs-load-key service template
+      template:
+        src: zfs-load-key.service
+        dest: /etc/systemd/system/zfs-load-key.service
+        mode: '0644'
+
+    - name: Reload systemd
+      systemd:
+        daemon_reload: yes
+  when: not zfs_load_key_service.stat.exists
