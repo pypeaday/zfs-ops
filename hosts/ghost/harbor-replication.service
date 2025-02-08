@@ -1,5 +1,5 @@
 [Unit]
-Description=ZFS Replication With Syncoid
+Description=ZFS Replication With Syncoid to Harbor
 
 [Service]
 Type=oneshot

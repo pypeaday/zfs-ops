@@ -1,8 +1,8 @@
 [Unit]
-Description=Run syncoid-replication every hour
+Description=Run harbor-replication on even hours
 
 [Timer]
-OnCalendar=hourly
+OnCalendar=*-*-* 0,2,4,6,8,10,12,14,16,18,20,22:00:00
 
 [Install]
 WantedBy=timers.target
