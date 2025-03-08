@@ -24,15 +24,6 @@ curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/syncoid
 # syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/fs tank/encrypted/fs
 # syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/fs/home tank/encrypted/fs/home
 
-curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/ghost-vault-vms/start
-# syncoid --skip-parent --no-sync-snap --sendoptions=w -r --no-privilege-elevation nic@ghost:tank/encrypted/vms tank/encrypted/vms
-syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation --create-bookmark --no-resume nic@ghost:tank/encrypted/vms tank/encrypted/vms
-syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation --create-bookmark --no-resume nic@ghost:tank/encrypted/vms/pihole tank/encrypted/vms/pihole
-syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation --create-bookmark --no-resume nic@ghost:tank/encrypted/vms/homeassistant tank/encrypted/vms/homeassistant
-# syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/vms/win10 tank/encrypted/vms/win10
-# syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/vms/block-subnet-router tank/encrypted/vms/block-subnet-router
-curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/ghost-vault-vms
-
 curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/ghost-vault-docker/start
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation --create-bookmark --no-resume nic@ghost:tank/encrypted/docker tank/encrypted/docker
 curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/ghost-vault-docker
@@ -52,6 +43,15 @@ syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation --create-bookmar
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation --create-bookmark --no-resume nic@ghost:tank/encrypted/nas/dump tank/encrypted/nas/dump
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation --create-bookmark --no-resume nic@ghost:tank/encrypted/nas/torrents tank/encrypted/nas/torrents
 curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/ghost-vault-nas
+
+curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/ghost-vault-vms/start
+# syncoid --skip-parent --no-sync-snap --sendoptions=w -r --no-privilege-elevation nic@ghost:tank/encrypted/vms tank/encrypted/vms
+syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation --create-bookmark --no-resume nic@ghost:tank/encrypted/vms tank/encrypted/vms
+# syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation --create-bookmark --no-resume nic@ghost:tank/encrypted/vms/pihole tank/encrypted/vms/pihole
+syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation --create-bookmark --no-resume nic@ghost:tank/encrypted/vms/homeassistant tank/encrypted/vms/homeassistant
+# syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/vms/win10 tank/encrypted/vms/win10
+# syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/vms/block-subnet-router tank/encrypted/vms/block-subnet-router
+curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/ghost-vault-vms
 
 # curl http://ghost:3003/api/push/hp6KnHdVXJ?status=up &
 # msg=OK &
