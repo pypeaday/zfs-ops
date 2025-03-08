@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -u
 
 # hcio start
 curl https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/harbor-replication/start
