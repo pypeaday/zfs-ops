@@ -29,6 +29,7 @@ syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation --create-bookmar
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/docker/the-pit-zfs tank/encrypted/docker/the-pit-zfs
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/docker/minio-zfs tank/encrypted/docker/minio-zfs
 syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/docker/media-stack tank/encrypted/docker/media-stack
+syncoid --no-sync-snap --sendoptions=w --no-privilege-elevation nic@ghost:tank/encrypted/docker/manyfold-zfs tank/encrypted/docker/manyfold-zfs
 curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/ghost-vault-docker
 
 curl -m 10 --retry 5 https://hc-ping.com/uWDfVXr2W4O9rF7deuOEog/ghost-vault-nextcloud/start
